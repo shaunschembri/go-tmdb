@@ -127,25 +127,42 @@ type PersonLatest struct {
 type PersonMovieCredits struct {
 	ID   int
 	Cast []struct {
-		Adult         bool
-		Character     string
-		CreditID      string `json:"credit_id"`
-		ID            int
-		OriginalTitle string `json:"original_title"`
-		PosterPath    string `json:"poster_path"`
-		ReleaseDate   string `json:"release_date"`
-		Title         string
+		Adult            bool    `json:"adult"`
+		BackdropPath     string  `json:"backdrop_path"`
+		Character        string  `json:"character"`
+		CreditID         string  `json:"credit_id"`
+		GenreIds         []int   `json:"genre_ids"`
+		ID               int     `json:"id"`
+		Order            int     `json:"order"`
+		OriginalLanguage string  `json:"original_language"`
+		OriginalTitle    string  `json:"original_title"`
+		Overview         string  `json:"overview"`
+		Popularity       float32 `json:"popularity"`
+		PosterPath       string  `json:"poster_path"`
+		ReleaseDate      string  `json:"release_date"`
+		Title            string  `json:"title"`
+		Video            bool    `json:"video"`
+		VoteAverage      int     `json:"vote_average"`
+		VoteCount        int     `json:"vote_count"`
 	}
 	Crew []struct {
-		Adult         bool
-		CreditID      string `json:"credit_id"`
-		Department    string
-		ID            int
-		Job           string
-		OriginalTitle string `json:"original_title"`
-		PosterPath    string `json:"poster_path"`
-		ReleaseDate   string `json:"release_date"`
-		Title         string
+		Adult            bool    `json:"adult"`
+		BackdropPath     string  `json:"backdrop_path"`
+		CreditID         string  `json:"credit_id"`
+		Department       string  `json:"department"`
+		GenreIds         []int   `json:"genre_ids"`
+		ID               int     `json:"id"`
+		Job              string  `json:"job"`
+		OriginalLanguage string  `json:"original_language"`
+		OriginalTitle    string  `json:"original_title"`
+		Overview         string  `json:"overview"`
+		Popularity       float32 `json:"popularity"`
+		PosterPath       string  `json:"poster_path"`
+		ReleaseDate      string  `json:"release_date"`
+		Title            string  `json:"title"`
+		Video            bool    `json:"video"`
+		VoteAverage      float32 `json:"vote_average"`
+		VoteCount        int     `json:"vote_count"`
 	}
 }
 
