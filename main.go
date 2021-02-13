@@ -47,6 +47,7 @@ type tmdbConfig struct {
 	useProxy   bool
 	proxies    []Proxy
 	roundRobin RoundRobin
+	httpClient http.Client
 }
 
 type apiStatus struct {
@@ -61,6 +62,9 @@ func Init(config Config) *TMDb {
 		internalConfig.useProxy = config.UseProxy
 		internalConfig.proxies = prepareProxies(config.Proxies)
 		internalConfig.roundRobin = InitRoundRobin(len(internalConfig.proxies))
+		internalConfig.httpClient = http.Client{
+			Transport: &http.Transport{},
+		}
 	}
 
 	return &TMDb{apiKey: config.APIKey}
@@ -143,9 +147,7 @@ func prepareProxies(proxies []Proxy) []Proxy {
 }
 
 func getHTTPClient() http.Client {
-	return http.Client{
-		Transport: &http.Transport{},
-	}
+	return internalConfig.httpClient
 }
 
 func getHTTPClientWithProxy(proxy Proxy) http.Client {
