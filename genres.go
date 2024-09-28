@@ -6,10 +6,12 @@ import (
 
 // Genre struct
 type Genre struct {
-	Genres []struct {
-		ID   int
-		Name string
-	}
+	Genres Genres
+}
+
+type Genres []struct {
+	ID   int
+	Name string
 }
 
 // GetMovieGenres gets the list of movie genres

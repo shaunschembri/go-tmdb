@@ -15,7 +15,8 @@ type TvEpisode struct {
 		Job         string
 		ProfilePath string `json:"profile_path"`
 	}
-	EpisodeNumber int `json:"episode_number"`
+	EpisodeNumber int           `json:"episode_number"`
+	ExternalIDs   TvExternalIds `json:"external_ids"`
 	GuestStars    []struct {
 		ID          int
 		CreditID    string `json:"credit_id"`

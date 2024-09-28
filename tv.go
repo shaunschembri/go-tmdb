@@ -51,14 +51,10 @@ type TV struct {
 	OriginalName        string   `json:"original_name"`
 	Overview            string
 	Popularity          float32
-	PosterPath          string `json:"poster_path"`
-	ProductionCompanies []struct {
-		ID        int
-		Name      string
-		LogoPath  string `json:"logo_path"`
-		Iso3166_1 string `json:"origin_country"`
-	} `json:"production_companies"`
-	Seasons []struct {
+	PosterPath          string              `json:"poster_path"`
+	ProductionCompanies ProductionCompanies `json:"production_companies"`
+	ProductionCountries ProductionCountries `json:"production_countries"`
+	Seasons             []struct {
 		Name         string
 		Overview     string
 		AirDate      string `json:"air_date"`
@@ -67,6 +63,7 @@ type TV struct {
 		PosterPath   string `json:"poster_path"`
 		SeasonNumber int    `json:"season_number"`
 	}
+	SpokenLanguages   SpokenLanguages `json:"spoken_languages"`
 	Status            string
 	Type              string
 	VoteAverage       float32              `json:"vote_average"`
@@ -150,32 +147,16 @@ type TvChanges struct {
 
 // TvCredits struct
 type TvCredits struct {
-	ID   int
-	Cast []struct {
-		Character   string
-		CreditID    string `json:"credit_id"`
-		ID          int
-		Name        string
-		Gender      int `json:"gender"`
-		Order       int
-		ProfilePath string `json:"profile_path"`
-	}
+	ID                int
+	Cast              CastCredit
+	Crew              CrewCredit
 	AlternativeTitles *TvAlternativeTitles `json:"alternative_titles,omitempty"`
 	Changes           *TvChanges           `json:",omitempty"`
-	Crew              []struct {
-		CreditID    string `json:"credit_id"`
-		Department  string
-		Gender      int `json:"gender"`
-		ID          int
-		Name        string
-		Job         string
-		ProfilePath string `json:"profile_path"`
-	}
-	Images       *TvImages       `json:",omitempty"`
-	Keywords     *TvKeywords     `json:",omitempty"`
-	Similar      *TvPagedResults `json:",omitempty"`
-	Translations *TvTranslations `json:",omitempty"`
-	Videos       *TvVideos       `json:",omitempty"`
+	Images            *TvImages            `json:",omitempty"`
+	Keywords          *TvKeywords          `json:",omitempty"`
+	Similar           *TvPagedResults      `json:",omitempty"`
+	Translations      *TvTranslations      `json:",omitempty"`
+	Videos            *TvVideos            `json:",omitempty"`
 }
 
 // TvExternalIds struct
