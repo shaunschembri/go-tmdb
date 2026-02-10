@@ -14,6 +14,19 @@ type AccountInfo struct {
 	Username     string
 }
 
+// WatchlistRequest struct for adding/removing items from watchlist
+type WatchlistRequest struct {
+	MediaType string `json:"media_type"`
+	MediaID   int    `json:"media_id"`
+	Watchlist bool   `json:"watchlist"`
+}
+
+// WatchlistResponse struct for watchlist operations response
+type WatchlistResponse struct {
+	StatusCode    int    `json:"status_code"`
+	StatusMessage string `json:"status_message"`
+}
+
 // GetAccountInfo gets the basic information for an account
 // https://developers.themoviedb.org/3/account/get-account-details
 func (tmdb *TMDb) GetAccountInfo(sessionID string) (*AccountInfo, error) {
@@ -118,4 +131,60 @@ func (tmdb *TMDb) GetAccountWatchlistTv(id int, sessionID string, options map[st
 	uri := fmt.Sprintf("%s/account/%v/watchlist/tv?api_key=%s&session_id=%s%s", baseURL, id, tmdb.apiKey, sessionID, optionsString)
 	result, err := getTmdb(uri, &favorites)
 	return result.(*TvPagedResults), err
+}
+
+// AddAccountWatchlistMovie adds a movie to an accounts watchlist
+// https://developers.themoviedb.org/3/account/add-to-watchlist
+func (tmdb *TMDb) AddAccountWatchlistMovie(id int, sessionID string, movieID int) (*WatchlistResponse, error) {
+	var response WatchlistResponse
+	requestBody := WatchlistRequest{
+		MediaType: "movie",
+		MediaID:   movieID,
+		Watchlist: true,
+	}
+	uri := fmt.Sprintf("%s/account/%v/watchlist?api_key=%s&session_id=%s", baseURL, id, tmdb.apiKey, sessionID)
+	result, err := postTmdb(uri, requestBody, &response)
+	return result.(*WatchlistResponse), err
+}
+
+// AddAccountWatchlistTv adds a TV show to an accounts watchlist
+// https://developers.themoviedb.org/3/account/add-to-watchlist
+func (tmdb *TMDb) AddAccountWatchlistTv(id int, sessionID string, tvID int) (*WatchlistResponse, error) {
+	var response WatchlistResponse
+	requestBody := WatchlistRequest{
+		MediaType: "tv",
+		MediaID:   tvID,
+		Watchlist: true,
+	}
+	uri := fmt.Sprintf("%s/account/%v/watchlist?api_key=%s&session_id=%s", baseURL, id, tmdb.apiKey, sessionID)
+	result, err := postTmdb(uri, requestBody, &response)
+	return result.(*WatchlistResponse), err
+}
+
+// RemoveAccountWatchlistMovie removes a movie from an accounts watchlist
+// https://developers.themoviedb.org/3/account/add-to-watchlist
+func (tmdb *TMDb) RemoveAccountWatchlistMovie(id int, sessionID string, movieID int) (*WatchlistResponse, error) {
+	var response WatchlistResponse
+	requestBody := WatchlistRequest{
+		MediaType: "movie",
+		MediaID:   movieID,
+		Watchlist: false,
+	}
+	uri := fmt.Sprintf("%s/account/%v/watchlist?api_key=%s&session_id=%s", baseURL, id, tmdb.apiKey, sessionID)
+	result, err := postTmdb(uri, requestBody, &response)
+	return result.(*WatchlistResponse), err
+}
+
+// RemoveAccountWatchlistTv removes a TV show from an accounts watchlist
+// https://developers.themoviedb.org/3/account/add-to-watchlist
+func (tmdb *TMDb) RemoveAccountWatchlistTv(id int, sessionID string, tvID int) (*WatchlistResponse, error) {
+	var response WatchlistResponse
+	requestBody := WatchlistRequest{
+		MediaType: "tv",
+		MediaID:   tvID,
+		Watchlist: false,
+	}
+	uri := fmt.Sprintf("%s/account/%v/watchlist?api_key=%s&session_id=%s", baseURL, id, tmdb.apiKey, sessionID)
+	result, err := postTmdb(uri, requestBody, &response)
+	return result.(*WatchlistResponse), err
 }

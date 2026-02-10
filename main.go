@@ -1,9 +1,10 @@
 package tmdb
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -106,7 +107,61 @@ func getTmdb(url string, payload interface{}) (interface{}, error) {
 
 	defer res.Body.Close() // Clean up
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
+	if err != nil { // Failed to read body
+		return payload, err
+	}
+
+	if res.StatusCode >= 200 && res.StatusCode < 300 { // Success!
+		json.Unmarshal(body, &payload)
+		return payload, nil
+	}
+
+	// Handle failure modes
+	var status apiStatus
+	err = json.Unmarshal(body, &status)
+	if err != nil {
+		return payload, err
+	}
+	return payload, fmt.Errorf("Code (%d): %s", status.Code, status.Message)
+}
+
+func postTmdb(url string, requestBody interface{}, payload interface{}) (interface{}, error) {
+	var httpRequest http.Client
+	var blocker <-chan time.Time
+
+	if internalConfig.useProxy {
+		roundRobin := internalConfig.roundRobin.GetTicker()
+		proxy := internalConfig.proxies[roundRobin]
+
+		if proxy.Host == "localhost" {
+			httpRequest = getHTTPClient()
+		} else {
+			httpRequest = getHTTPClientWithProxy(proxy)
+		}
+
+		blocker = proxy.throttle
+	} else {
+		httpRequest = getHTTPClient()
+		blocker = throttle
+	}
+
+	<-blocker
+
+	// Marshal request body to JSON
+	jsonBody, err := json.Marshal(requestBody)
+	if err != nil {
+		return payload, err
+	}
+
+	res, err := httpRequest.Post(url, "application/json", bytes.NewBuffer(jsonBody))
+	if err != nil { // HTTP connection error
+		return payload, err
+	}
+
+	defer res.Body.Close() // Clean up
+
+	body, err := io.ReadAll(res.Body)
 	if err != nil { // Failed to read body
 		return payload, err
 	}
