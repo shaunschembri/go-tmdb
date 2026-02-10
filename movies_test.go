@@ -167,6 +167,16 @@ func (s *TmdbSuite) TestGetMovieReleases(c *C) {
 	c.Assert(result.Countries[0].ReleaseDate, Equals, "1999-10-14")
 }
 
+func (s *TmdbSuite) TestGetMovieReleaseDates(c *C) {
+	result, err := s.tmdb.GetMovieReleaseDates(fightClubID, nil)
+	s.baseTest(&result, err, c)
+	c.Assert(result.ID, Equals, fightClubID)
+	c.Assert(result.Results, Not(HasLen), 0)
+	c.Assert(result.Results[0].Iso3166_1, Equals, "US")
+	c.Assert(result.Results[0].ReleaseDates, Not(HasLen), 0)
+	c.Assert(result.Results[0].ReleaseDates[0].Certification, Equals, "R")
+}
+
 func (s *TmdbSuite) TestGetMovieReviews(c *C) {
 	result, err := s.tmdb.GetMovieReviews(darkKnightID, nil)
 	s.baseTest(&result, err, c)

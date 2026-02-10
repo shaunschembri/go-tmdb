@@ -37,6 +37,7 @@ type Movie struct {
 	Images              *MovieImages            `json:",omitempty"`
 	Keywords            *MovieKeywords          `json:",omitempty"`
 	Releases            *MovieReleases          `json:",omitempty"`
+	ReleaseDates        *MovieReleaseDates      `json:"release_dates,omitempty"`
 	Videos              *MovieVideos            `json:",omitempty"`
 	Translations        *MovieTranslations      `json:",omitempty"`
 	Similar             *MoviePagedResults      `json:",omitempty"`
@@ -184,7 +185,7 @@ type MovieImages struct {
 	ID                int
 	Backdrops         []MovieImage
 	Posters           []MovieImage
-	Logos		  []MovieImage
+	Logos             []MovieImage
 	AlternativeTitles *MovieAlternativeTitles `json:"alternative_titles,omitempty"`
 	Credits           *MovieCredits           `json:",omitempty"`
 	Keywords          *MovieKeywords          `json:",omitempty"`
@@ -271,6 +272,21 @@ type MovieReleases struct {
 	Lists             *MovieLists             `json:",omitempty"`
 	Changes           *MovieChanges           `json:",omitempty"`
 	Rating            *MovieRating            `json:",omitempty"`
+}
+
+// MovieReleaseDates models the response from the /movie/{movie_id}/release_dates endpoint
+type MovieReleaseDates struct {
+	ID      int `json:"id"`
+	Results []struct {
+		Iso3166_1    string `json:"iso_3166_1"`
+		ReleaseDates []struct {
+			Certification string `json:"certification"`
+			Iso639_1      string `json:"iso_639_1"`
+			ReleaseDate   string `json:"release_date"`
+			Type          int    `json:"type"`
+			Note          string `json:"note"`
+		} `json:"release_dates"`
+	} `json:"results"`
 }
 
 // MovieReviews struct
@@ -518,6 +534,17 @@ func (tmdb *TMDb) GetMovieReleases(id int, options map[string]string) (*MovieRel
 	uri := fmt.Sprintf("%s/movie/%v/releases?api_key=%s%s", baseURL, id, tmdb.apiKey, optionsString)
 	result, err := getTmdb(uri, &releases)
 	return result.(*MovieReleases), err
+}
+
+// GetMovieReleaseDates gets the release dates for a specific movie id
+// https://developers.themoviedb.org/3/movies/get-movie-release-dates
+func (tmdb *TMDb) GetMovieReleaseDates(id int, options map[string]string) (*MovieReleaseDates, error) {
+	var availableOptions = map[string]struct{}{}
+	var releaseDates MovieReleaseDates
+	optionsString := getOptionsString(options, availableOptions)
+	uri := fmt.Sprintf("%s/movie/%v/release_dates?api_key=%s%s", baseURL, id, tmdb.apiKey, optionsString)
+	result, err := getTmdb(uri, &releaseDates)
+	return result.(*MovieReleaseDates), err
 }
 
 // GetMovieReviews for a specific movie id
